@@ -2,6 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/modern-lru.svg?style=flat-square)](https://www.npmjs.com/package/modern-lru)
 [![Travis](https://img.shields.io/travis/silentroach/modern-lru.svg?style=flat-square&label=travis)](https://travis-ci.org/silentroach/modern-lru)
+[![Coverage](https://img.shields.io/coveralls/silentroach/modern-lru.svg?style=flat-square&label=coverage)](https://coveralls.io/github/silentroach/modern-lru)
 
 Simple LRU cache implementation on modern javascript.
 
@@ -35,7 +36,7 @@ console.log(cache.get('fourth')); // fourth
 console.log(cache instanceof Map); // true
 
 // so you can use `keys()` for example
-console.log(Array.from(cache.keys()).join(', ')) // 'fourth, second, third'
+console.log(Array.from(cache.keys()).join(', ')); // 'fourth, second, third'
 
 // or use objects, as with Map
 const myObject = { test: 5 };

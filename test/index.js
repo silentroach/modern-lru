@@ -41,8 +41,7 @@ describe('LRU cache', () => {
 			const value = 'value';
 
 			const lru = new LRU(1);
-			lru.set(key, value);
-
+			assert.ok(lru.set(key, value) instanceof LRU, 'should return LRU instance on set');
 			assert.strictEqual(lru.get('something'), undefined, '`get()` should return undefined if key is not found');
 			assert.ok(lru.has(key), '`has()` should indicate whether an element exists');
 			assert.strictEqual(lru.get(key), value, '`get()` should return correct value');
@@ -56,6 +55,16 @@ describe('LRU cache', () => {
 
 			assert.ok(lru.has(key));
 			assert.ok(!lru.has({ test : 5})); // different pointers
+		});
+
+		it('`clear()` should clean the map', () => {
+			const lru = new LRU(1);
+			lru.set('first', 'first');
+
+			assert.strictEqual(lru.size, 1);
+			lru.clear();
+			assert.strictEqual(lru.size, 0);
+			assert.ok(!lru.has('first'));
 		});
 
 		it('`delete()` should return if key existed', () => {
@@ -100,43 +109,38 @@ describe('LRU cache', () => {
 			}
 
 			assert.strictEqual(count, keys.length);
+			assert.deepEqual(Array.from(lru.keys()), reversed);
 		});
 
-		it('`entries()` should return entries iterator', () => {
-			const lru = new LRU(2);
-			const keys = ['first', 'second'];
-			const reversed = keys.slice(0).reverse();
+		function entriesTest(name, iterator) {
+			it(name, () => {
+				const lru = new LRU(2);
+				const keys = ['first', 'second'];
+				const reversed = keys.slice(0).reverse();
 
-			keys.forEach(key => lru.set(key, key));
+				keys.forEach(key => lru.set(key, key));
 
-			let count = 0;
-			let idx = 0;
-			for (const entry of lru.entries()) {
-				const key = reversed[idx++];
-				++count;
-				assert.deepEqual(entry, [key, lru.get(key)]);
-			}
+				let count = 0;
+				let idx = 0;
+				for (const entry of iterator(lru)) {
+					const key = reversed[idx++];
+					++count;
+					assert.deepEqual(entry, [key, lru.get(key)]);
+				}
 
-			assert.strictEqual(count, keys.length);
-		});
+				assert.strictEqual(count, keys.length);
+			});
+		}
 
-		it('`@@iterator` should return entries iterator', () => {
-			const lru = new LRU(2);
-			const keys = ['first', 'second'];
-			const reversed = keys.slice(0).reverse();
+		entriesTest(
+			'`entries()` should return entries iterator',
+			lru => lru.entries()
+		);
 
-			keys.forEach(key => lru.set(key, key));
-
-			let count = 0;
-			let idx = 0;
-			for (const entry of lru) {
-				const key = reversed[idx++];
-				++count;
-				assert.deepEqual(entry, [key, lru.get(key)]);
-			}
-
-			assert.strictEqual(count, keys.length);
-		});
+		entriesTest(
+			'`@@iterator` should return entries iterator',
+			lru => lru
+		);
 
 		it('`forEach()` should call callback for each element', () => {
 			const keys = ['first', 'second', 'third'];

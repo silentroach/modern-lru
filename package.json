@@ -1,6 +1,6 @@
 {
   "name": "modern-lru",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "LRU cache on modern javascript",
   "main": "index.js",
   "directories": {
@@ -12,6 +12,11 @@
     "coverage": "istanbul cover _mocha",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
+  "repository": "git://github.com/silentroach/modern-lru.git",
+  "bugs": {
+    "url": "https://github.com/silentroach/modern-lru/issues"
+  },
+  "homepage": "https://github.com/silentroach/modern-lru#readme",
   "keywords": [
     "lru",
     "cache",
