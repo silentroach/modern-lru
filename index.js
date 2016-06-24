@@ -142,6 +142,7 @@ class LRU extends Map {
 			const [, previous] = super.get(this[propTail]);
 			super.get(previous)[2] = undefined;
 			super.delete(this[propTail]);
+			this[propTail] = previous;
 		}
 
 		this[propHead] = key;

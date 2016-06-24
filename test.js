@@ -58,7 +58,7 @@ describe('LRU cache', () => {
 			assert.ok(!lru.has({ test : 5})); // different pointers
 		});
 
-		it('delete should return if key existed', () => {
+		it('`delete()` should return if key existed', () => {
 			const lru = new LRU(1);
 			lru.set('first', 'first');
 
@@ -209,7 +209,7 @@ describe('LRU cache', () => {
 			assert.ok(lru.has('third'));
 		});
 
-		it('should work fine if tails is removed', () => {
+		it('should work fine if tail is removed', () => {
 			const lru = new LRU(2);
 
 			lru.set('first', 'first');

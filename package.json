@@ -1,6 +1,6 @@
 {
   "name": "modern-lru",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "LRU cache on modern javascript",
   "main": "index.js",
   "directories": {
@@ -25,7 +25,6 @@
     "node": "^6.0.0"
   },
   "devDependencies": {
-    "eslint": "^2.13.1",
     "istanbul": "^0.4.4",
     "mocha": "^2.5.3"
   }

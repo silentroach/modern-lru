@@ -1,6 +1,9 @@
 # LRU cache for node.js
 
-LRU cache implementation on modern javascript.
+[![npm](https://img.shields.io/npm/v/modern-lru.svg?style=flat-square)](https://www.npmjs.com/package/modern-lru)
+[![Travis](https://img.shields.io/travis/silentroach/modern-lru.svg?style=flat-square&label=travis)](https://travis-ci.org/silentroach/modern-lru)
+
+Simple LRU cache implementation on modern javascript.
 
 ## Installation
 
@@ -8,24 +11,36 @@ LRU cache implementation on modern javascript.
 
 ## Usage
 
-	const LRU = require('modern-lru');
+```js
+const LRU = require('modern-lru');
 
-	// lru cache with limit of 3 entries
-	const cache = new LRU(3);
+// lru cache with limit of 3 entries
+const cache = new LRU(3);
 
-	cache.set('first', 'first');
-	cache.set('second', 'second');
-	cache.set('third', 'third');
+console.log(cache.limit); // 3
+console.log(cache.size); // 0 (elements count)
 
-	console.log(cache.get('second')); // second
-	console.log(cache); // LRU { 'second' => 'second', 'third' => 'third', 'first' => 'first' }
+cache.set('first', 'first');
+cache.set('second', 'second');
+cache.set('third', 'third');
 
-	cache.set('fourth', 'fourth'); // will evict "first"
+console.log(cache.get('second')); // second
+console.log(cache); // LRU { 'second' => 'second', 'third' => 'third', 'first' => 'first' }
 
-	// also it implements default Map
-	console.log(cache instanceof Map); // true
+cache.set('fourth', 'fourth'); // will evict "first"
+console.log(cache.has('first')); // false
+console.log(cache.get('fourth')); // fourth
 
-	// so you can use `keys()` for example
-	console.log(Array.from(cache.keys()).join(', ')) // 'fourth, second, third'
+// also it implements default Map
+console.log(cache instanceof Map); // true
 
-	console.log(cache.limit); // 3
+// so you can use `keys()` for example
+console.log(Array.from(cache.keys()).join(', ')) // 'fourth, second, third'
+
+// or use objects, as with Map
+const myObject = { test: 5 };
+cache.set(myObject, 'testme');
+console.log(cache.has(myObject)); // true
+console.log(cache.get(myObject)); // 'testme'
+console.log(cache.get({ test: 5})); // undefined (different pointer)
+```
