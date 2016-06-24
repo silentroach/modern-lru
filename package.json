@@ -1,0 +1,32 @@
+{
+  "name": "modern-lru",
+  "version": "0.0.0",
+  "description": "LRU cache on modern javascript",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test.js",
+    "coverage": "istanbul cover _mocha test.js"
+  },
+  "keywords": [
+    "lru",
+    "cache",
+    "modern",
+    "es6"
+  ],
+  "files": [
+    "index.js"
+  ],
+  "author": "Igor Kalashnikov <igor.kalashnikov@me.com>",
+  "license": "MIT",
+  "engines": {
+    "node": "^6.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^2.13.1",
+    "istanbul": "^0.4.4",
+    "mocha": "^2.5.3"
+  }
+}
