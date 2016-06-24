@@ -1,0 +1,14 @@
+root: true
+
+extends:
+    "eslint:recommended"
+
+env:
+    node: true
+    es6: true
+
+rules:
+    indent:
+        - error
+        - tab
+        - SwitchCase: 1

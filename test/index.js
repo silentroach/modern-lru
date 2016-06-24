@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const LRU = require('./');
+const LRU = require('../');
 
 describe('LRU cache', () => {
 	describe('constructor', () => {
@@ -59,10 +59,12 @@ describe('LRU cache', () => {
 		});
 
 		it('`delete()` should return if key existed', () => {
-			const lru = new LRU(1);
+			const lru = new LRU(3);
 			lru.set('first', 'first');
+			lru.set('second', 'second');
+			lru.set('third', 'third');
 
-			assert.strictEqual(lru.delete('first'), true);
+			assert.strictEqual(lru.delete('second'), true);
 			assert.strictEqual(lru.delete('something'), false);
 		});
 
