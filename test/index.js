@@ -185,6 +185,17 @@ describe('LRU cache', () => {
 			assert.ok(!lru.has('first'), 'first key should be evicted');
 			assert.ok(lru.has('second'), 'second should not be evicted');
 		});
+
+		it('should work fine on double set', () => {
+			const lru = new LRU(3);
+
+			lru.set('first', 'first');
+			lru.set('second', 'second');
+			lru.set('third', 'third');
+			lru.set('second', 'ha!');  // the most recent now, will restruct nearest
+
+			assert.deepEqual(Array.from(lru.keys()), ['second', 'third', 'first']);
+		})
 	});
 
 	describe('delete', () => {

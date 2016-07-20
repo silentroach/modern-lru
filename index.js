@@ -120,29 +120,53 @@ class LRU extends Map {
 	}
 
 	set(key, value) {
+		let checkSize = false;
+
+		const oldRecord = super.get(key);
+		if (undefined !== oldRecord) {
+			const [, previous, next] = oldRecord;
+			if (undefined !== previous) {
+				super.get(previous)[2] = next;
+			}
+			if (undefined !== next) {
+				super.get(next)[1] = previous;
+			}
+
+			oldRecord[0] = value;
+			oldRecord[2] = this[propHead];
+		} else {
+			const record = new Array(3);
+			record[0] = value;
+			record[1] = undefined;
+			record[2] = this[propHead];
+
+			super.set(key, record);
+
+			if (undefined === this[propTail]) {
+				this[propTail] = key;
+			} else checkSize = true;
+		}
+
 		if (this[propHead]) {
 			const head = super.get(this[propHead]);
 			head[1] = key;
 		}
 
-		const record = new Array(3);
-		record[0] = value;
-		record[1] = undefined;
-		record[2] = this[propHead];
-
-		super.set(key, record);
-
-		if (undefined === this[propTail]) {
-			this[propTail] = key;
-		} else
-		if (this.size > this[propLimit]) {
-			const [, previous] = super.get(this[propTail]);
-			super.get(previous)[2] = undefined;
-			super.delete(this[propTail]);
-			this[propTail] = previous;
-		}
-
 		this[propHead] = key;
+
+		if (checkSize) {
+			const tail = super.get(this[propTail]);
+			if (undefined === tail[1]) {
+				tail[1] = key;
+			}
+
+			if (this.size > this[propLimit]) {
+				const [, previous] = tail;
+				super.get(previous)[2] = undefined;
+				super.delete(this[propTail]);
+				this[propTail] = previous;
+			}
+		}
 
 		return this;
 	}
