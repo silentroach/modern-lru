@@ -57,6 +57,17 @@ describe('LRU cache', () => {
 			assert.ok(!lru.has({ test : 5})); // different pointers
 		});
 
+		it('undefined as key', () => {
+			const key = undefined;
+			const value = 5;
+
+			const lru = new LRU(1);
+			lru.set(key, value);
+
+			assert.ok(lru.has(key), '`has()` should return true');
+			assert.strictEqual(lru.get(key), value, '`get()` should reply with value');
+		});
+
 		it('`clear()` should clean the map', () => {
 			const lru = new LRU(1);
 			lru.set('first', 'first');
@@ -195,7 +206,29 @@ describe('LRU cache', () => {
 			lru.set('second', 'ha!');  // the most recent now, will restruct nearest
 
 			assert.deepEqual(Array.from(lru.keys()), ['second', 'third', 'first']);
-		})
+		});
+
+		it('should work fine on double set on tail', () => {
+			const lru = new LRU(3);
+
+			lru.set('first', 'first');
+			lru.set('second', 'second');
+			lru.set('third', 'third');
+			lru.set('first', 'ha!');
+
+			assert.deepEqual(Array.from(lru.keys()), ['first', 'third', 'second']);
+		});
+
+		it('should work fine on double set on head', () => {
+			const lru = new LRU(3);
+
+			lru.set('first', 'first');
+			lru.set('second', 'second');
+			lru.set('third', 'third');
+			lru.set('third', 'ha!');
+
+			assert.deepEqual(Array.from(lru.keys()), ['third', 'second', 'first']);
+		});
 	});
 
 	describe('delete', () => {

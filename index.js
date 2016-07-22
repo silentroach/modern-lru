@@ -8,6 +8,8 @@ const propGetter = Symbol();
 const propStart = Symbol();
 const propType = Symbol();
 
+const undefinedKey = Symbol();
+
 class LRUIterator {
 	constructor(getter, start, type) {
 		this[propGetter] = getter;
@@ -20,9 +22,13 @@ class LRUIterator {
 
 		return {
 			next: () => {
-				if (key) {
+				if (undefined !== key) {
 					const record = this[propGetter](key);
 					let value;
+
+					if (key === undefinedKey) {
+						key = undefined;
+					}
 
 					switch (this[propType]) {
 						case IteratorTypes.Keys:
@@ -90,7 +96,17 @@ class LRU extends Map {
 		return true;
 	}
 
+	has(key) {
+		return super.has(
+			undefined === key ? undefinedKey : key
+		);
+	}
+
 	get(key) {
+		if (undefined === key) {
+			key = undefinedKey;
+		}
+
 		const record = super.get(key);
 		if (undefined === record) {
 			return record;
@@ -120,25 +136,30 @@ class LRU extends Map {
 	}
 
 	set(key, value) {
+		if (undefined === key) {
+			key = undefinedKey;
+		}
+
 		let checkSize = false;
 
-		const oldRecord = super.get(key);
-		if (undefined !== oldRecord) {
-			const [, previous, next] = oldRecord;
-			if (undefined !== previous) {
+		let record = super.get(key);
+		if (undefined !== record) {
+			if (key !== this[propHead]) {
+				const [, previous, next] = record;
 				super.get(previous)[2] = next;
-			}
-			if (undefined !== next) {
-				super.get(next)[1] = previous;
-			}
 
-			oldRecord[0] = value;
-			oldRecord[2] = this[propHead];
+				if (undefined !== next) {
+					super.get(next)[1] = previous;
+				}
+
+				record[2] = this[propHead];
+
+				if (key === this[propTail]) {
+					this[propTail] = previous;
+				}
+			}
 		} else {
-			const record = new Array(3);
-			record[0] = value;
-			record[1] = undefined;
-			record[2] = this[propHead];
+			record = new Array(3);
 
 			super.set(key, record);
 
@@ -147,7 +168,12 @@ class LRU extends Map {
 			} else checkSize = true;
 		}
 
-		if (this[propHead]) {
+		record[0] = value;
+		record[1] = undefined;
+
+		if (undefined !== this[propHead] && key !== this[propHead]) {
+			record[2] = this[propHead];
+
 			const head = super.get(this[propHead]);
 			head[1] = key;
 		}
@@ -156,14 +182,12 @@ class LRU extends Map {
 
 		if (checkSize) {
 			const tail = super.get(this[propTail]);
-			if (undefined === tail[1]) {
-				tail[1] = key;
-			}
 
 			if (this.size > this[propLimit]) {
 				const [, previous] = tail;
 				super.get(previous)[2] = undefined;
 				super.delete(this[propTail]);
+
 				this[propTail] = previous;
 			}
 		}
