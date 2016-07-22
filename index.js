@@ -69,6 +69,12 @@ class LRU extends Map {
 		this[propLimit] = limit;
 	}
 
+	clear() {
+		this[propHead] = undefined;
+		this[propTail] = undefined;
+		super.clear();
+	}
+
 	delete(key) {
 		const record = super.get(key);
 		if (undefined === record) {
