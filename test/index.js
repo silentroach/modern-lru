@@ -196,6 +196,41 @@ describe('LRU cache', () => {
 			assert.ok(!lru.has('first'), 'first key should be evicted');
 			assert.ok(lru.has('second'), 'second should not be evicted');
 		});
+	});
+
+	describe('relinking', () => {
+		it('should work fine on head get', () => {
+			const lru = new LRU(3);
+
+			lru.set('first', 'first');
+			lru.set('second', 'second');
+			lru.set('third', 'third');
+			lru.get('third');
+
+			assert.deepEqual(Array.from(lru.keys()), ['third', 'second', 'first']);
+		});
+
+		it('should work fine on tail get', () => {
+			const lru = new LRU(3);
+
+			lru.set('first', 'first');
+			lru.set('second', 'second');
+			lru.set('third', 'third');
+			lru.get('first');
+
+			assert.deepEqual(Array.from(lru.keys()), ['first', 'third', 'second']);
+		});
+
+		it('should work fine get', () => {
+			const lru = new LRU(3);
+
+			lru.set('first', 'first');
+			lru.set('second', 'second');
+			lru.set('third', 'third');
+			lru.get('second');
+
+			assert.deepEqual(Array.from(lru.keys()), ['second', 'third', 'first']);
+		});
 
 		it('should work fine on double set', () => {
 			const lru = new LRU(3);
