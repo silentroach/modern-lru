@@ -91,11 +91,11 @@ class LRU extends Map {
 			this[propHead] = next;
 		}
 
-		if (previous) {
+		if (undefined !== previous) {
 			super.get(previous)[2] = next;
 		}
 
-		if (next) {
+		if (undefined !== next) {
 			super.get(next)[1] = previous;
 		}
 
@@ -108,10 +108,8 @@ class LRU extends Map {
 		);
 	}
 
-	get(key) {
-		if (undefined === key) {
-			key = undefinedKey;
-		}
+	get(originalKey) {
+		const key = undefined === originalKey ? undefinedKey : originalKey;
 
 		const record = super.get(key);
 		if (undefined === record) {
@@ -124,7 +122,7 @@ class LRU extends Map {
 
 			const [, previous, next] = record;
 			super.get(previous)[2] = next;
-			if (next) {
+			if (undefined !== next) {
 				super.get(next)[1] = previous;
 			}
 
@@ -132,7 +130,7 @@ class LRU extends Map {
 			record[2] = this[propHead];
 
 			if (key === this[propTail]) {
-				this[propTail] = record[2];
+				this[propTail] = previous;
 			}
 
 			this[propHead] = key;
@@ -141,11 +139,8 @@ class LRU extends Map {
 		return record[0];
 	}
 
-	set(key, value) {
-		if (undefined === key) {
-			key = undefinedKey;
-		}
-
+	set(originalKey, value) {
+		const key = undefined === originalKey ? undefinedKey : originalKey;
 		let checkSize = false;
 
 		let record = super.get(key);
@@ -177,7 +172,7 @@ class LRU extends Map {
 		record[0] = value;
 		record[1] = undefined;
 
-		if (undefined !== this[propHead] && key !== this[propHead]) {
+		if (key !== this[propHead] && undefined !== this[propHead]) {
 			record[2] = this[propHead];
 
 			const head = super.get(this[propHead]);
@@ -186,16 +181,13 @@ class LRU extends Map {
 
 		this[propHead] = key;
 
-		if (checkSize) {
+		if (checkSize && this.size > this[propLimit]) {
 			const tail = super.get(this[propTail]);
+			const [, previous] = tail;
+			super.get(previous)[2] = undefined;
+			super.delete(this[propTail]);
 
-			if (this.size > this[propLimit]) {
-				const [, previous] = tail;
-				super.get(previous)[2] = undefined;
-				super.delete(this[propTail]);
-
-				this[propTail] = previous;
-			}
+			this[propTail] = previous;
 		}
 
 		return this;
