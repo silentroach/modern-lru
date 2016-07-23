@@ -4,7 +4,7 @@
 [![Travis](https://img.shields.io/travis/silentroach/modern-lru.svg?style=flat-square&label=travis)](https://travis-ci.org/silentroach/modern-lru)
 [![Coverage](https://img.shields.io/coveralls/silentroach/modern-lru.svg?style=flat-square&label=coverage)](https://coveralls.io/github/silentroach/modern-lru)
 
-Simple LRU cache implementation on modern javascript.
+Simple LRU cache implementation on modern javascript based on native `Map` class.
 
 ## Installation
 
