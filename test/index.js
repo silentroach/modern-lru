@@ -67,6 +67,11 @@ describe('LRU cache', () => {
 			assert.ok(lru.has(key), '`has()` should return true');
 			assert.strictEqual(lru.get(key), value, '`get()` should reply with value');
 			assert.deepStrictEqual(Array.from(lru.keys()), [undefined]);
+
+			lru.delete(key);
+			assert.ok(!lru.has(key), '`has()` should return false');
+			assert.strictEqual(lru.get(key), undefined, '`get()` should reply with undefined');
+			assert.deepStrictEqual(Array.from(lru.keys()), []);
 		});
 
 		it('`clear()` should clean the map', () => {

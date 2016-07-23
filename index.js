@@ -75,7 +75,8 @@ class LRU extends Map {
 		super.clear();
 	}
 
-	delete(key) {
+	delete(originalKey) {
+		const key = undefined === originalKey ? undefinedKey : originalKey;
 		const record = super.get(key);
 		if (undefined === record) {
 			return false;
@@ -86,7 +87,7 @@ class LRU extends Map {
 
 		if (key === this[propTail]) {
 			this[propTail] = previous;
-		} else
+		}
 		if (key === this[propHead]) {
 			this[propHead] = next;
 		}
