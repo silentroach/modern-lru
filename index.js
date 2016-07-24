@@ -48,9 +48,11 @@ class LRUIterator {
 						value,
 						done: false
 					};
-				} else return { done: true };
+				} else {
+					return { done: true };
+				}
 			}
-		}
+		};
 	}
 }
 
@@ -167,7 +169,9 @@ class LRU extends Map {
 
 			if (undefined === this[propTail]) {
 				this[propTail] = key;
-			} else checkSize = true;
+			} else {
+				checkSize = true;
+			}
 		}
 
 		record[0] = value;

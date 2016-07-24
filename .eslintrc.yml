@@ -12,3 +12,14 @@ rules:
         - error
         - tab
         - SwitchCase: 1
+    semi:
+        - error
+        - always
+    curly:
+        - error
+    complexity:
+        - error
+        - 10
+    eqeqeq:
+        - error
+        - always
