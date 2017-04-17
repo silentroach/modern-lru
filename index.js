@@ -77,8 +77,7 @@ class LRU extends Map {
 		super.clear();
 	}
 
-	delete(originalKey) {
-		const key = undefined === originalKey ? undefinedKey : originalKey;
+	delete(key = undefinedKey) {
 		const record = super.get(key);
 		if (undefined === record) {
 			return false;
@@ -105,15 +104,11 @@ class LRU extends Map {
 		return true;
 	}
 
-	has(key) {
-		return super.has(
-			undefined === key ? undefinedKey : key
-		);
+	has(key = undefinedKey) {
+		return super.has(key);
 	}
 
-	get(originalKey) {
-		const key = undefined === originalKey ? undefinedKey : originalKey;
-
+	get(key = undefinedKey) {
 		const record = super.get(key);
 		if (undefined === record) {
 			return record;
@@ -142,8 +137,7 @@ class LRU extends Map {
 		return record[0];
 	}
 
-	set(originalKey, value) {
-		const key = undefined === originalKey ? undefinedKey : originalKey;
+	set(key = undefinedKey, value) {
 		let checkSize = false;
 
 		let record = super.get(key);
@@ -177,11 +171,10 @@ class LRU extends Map {
 		record[0] = value;
 		record[1] = undefined;
 
-		if (key !== this[propHead] && undefined !== this[propHead]) {
+		if (undefined !== this[propHead] && key !== this[propHead]) {
 			record[2] = this[propHead];
 
-			const head = super.get(this[propHead]);
-			head[1] = key;
+			super.get(this[propHead])[1] = key;
 		}
 
 		this[propHead] = key;
@@ -198,9 +191,9 @@ class LRU extends Map {
 		return this;
 	}
 
-	forEach(callback, thisArgument) {
+	forEach(callback, thisArg = this) {
 		for (const entry of this) {
-			callback.call(thisArgument || this, entry[1], entry[0], this);
+			callback.call(thisArg, entry[1], entry[0], this);
 		}
 	}
 
