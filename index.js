@@ -4,9 +4,9 @@ const IteratorTypes = {
 	Entries: 2
 };
 
-const propGetter = Symbol();
-const propStart = Symbol();
-const propType = Symbol();
+const propGetter = Symbol('propGetter');
+const propStart = Symbol('propStart');
+const propType = Symbol('propType');
 
 const undefinedKey = Symbol();
 
@@ -56,9 +56,9 @@ class LRUIterator {
 	}
 }
 
-const propLimit = Symbol();
-const propHead = Symbol();
-const propTail = Symbol();
+const propLimit = Symbol('propLimit');
+const propHead = Symbol('propHead');
+const propTail = Symbol('propTail');
 
 class LRU extends Map {
 	constructor(limit) {
