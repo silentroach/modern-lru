@@ -69,7 +69,7 @@ Returns a new `LRUIterator` object that contains **an array of [key, value]** fo
 ## Example
 
 ```js
-const LRU = require('modern-lru');
+const LRU = require('./');
 
 // lru cache with limit of 3 entries
 const cache = new LRU(3);
@@ -102,4 +102,9 @@ console.log(cache.get(myObject)); // 'testme'
 console.log(cache.get({ test: 5})); // undefined (different pointer)
 
 cache.clear();
+
+// also `undefined` and `NaN` are supported, as with Map
+cache.set(undefined, 5);
+cache.set(NaN, 10);
+console.log(cache); // LRU { NaN => 10, undefined => 5 }
 ```

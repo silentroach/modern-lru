@@ -1,60 +1,5 @@
-const IteratorTypes = {
-	Keys: 0,
-	Values: 1,
-	Entries: 2
-};
-
-const propGetter = Symbol();
-const propStart = Symbol();
-const propType = Symbol();
-
-const undefinedKey = Symbol();
-
-class LRUIterator {
-	constructor(getter, start, type) {
-		this[propGetter] = getter;
-		this[propStart] = start;
-		this[propType] = type;
-	}
-
-	[Symbol.iterator]() {
-		let key = this[propStart];
-
-		return {
-			next: () => {
-				if (undefined !== key) {
-					const record = this[propGetter](key);
-					let value;
-
-					if (key === undefinedKey) {
-						key = undefined;
-					}
-
-					switch (this[propType]) {
-						case IteratorTypes.Keys:
-							value = key;
-							break;
-						case IteratorTypes.Values:
-							value = record[0];
-							break;
-						case IteratorTypes.Entries:
-							value = [key, record[0]];
-							break;
-					}
-
-					key = record[2];
-
-					return {
-						value,
-						done: false
-					};
-				} else {
-					return { done: true };
-				}
-			}
-		};
-	}
-}
+const LRUIterator = require('./iterator');
+const {getStorageKey} = require('./keys');
 
 const propLimit = Symbol();
 const propHead = Symbol();
@@ -77,7 +22,8 @@ class LRU extends Map {
 		super.clear();
 	}
 
-	delete(key = undefinedKey) {
+	delete(originalKey) {
+		const key = getStorageKey(originalKey);
 		const record = super.get(key);
 		if (undefined === record) {
 			return false;
@@ -104,11 +50,12 @@ class LRU extends Map {
 		return true;
 	}
 
-	has(key = undefinedKey) {
-		return super.has(key);
+	has(key) {
+		return super.has(getStorageKey(key));
 	}
 
-	get(key = undefinedKey) {
+	get(originalKey) {
+		const key = getStorageKey(originalKey);
 		const record = super.get(key);
 		if (undefined === record) {
 			return record;
@@ -137,7 +84,8 @@ class LRU extends Map {
 		return record[0];
 	}
 
-	set(key = undefinedKey, value) {
+	set(originalKey, value) {
+		const key = getStorageKey(originalKey);
 		let checkSize = false;
 
 		let record = super.get(key);
@@ -198,15 +146,15 @@ class LRU extends Map {
 	}
 
 	values() {
-		return new LRUIterator(key => super.get(key), this[propHead], IteratorTypes.Values);
+		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Values);
 	}
 
 	keys() {
-		return new LRUIterator(key => super.get(key), this[propHead], IteratorTypes.Keys);
+		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Keys);
 	}
 
 	entries() {
-		return new LRUIterator(key => super.get(key), this[propHead], IteratorTypes.Entries);
+		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Entries);
 	}
 
 	[Symbol.iterator]() {

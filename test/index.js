@@ -57,6 +57,26 @@ describe('LRU cache', () => {
 			assert.ok(!lru.has({ test : 5})); // different pointers
 		});
 
+		it('NaN as key', () => {
+			const key = NaN;
+			const value = 5;
+
+			const lru = new LRU(1);
+			lru.set(key, value);
+
+			assert.ok(lru.has(key), '`has()` should return true');
+			assert.strictEqual(lru.get(key), value, '`get()` should reply with value');
+
+			const keys = Array.from(lru.keys());
+			assert.strictEqual(keys.length, 1, 'should be 1 key');
+			assert.strictEqual(Number.isNaN(keys[0]), true, 'key should be NaN');
+
+			lru.delete(key);
+			assert.ok(!lru.has(key), '`has()` should return false');
+			assert.strictEqual(lru.get(key), undefined, '`get()` should reply with undefined');
+			assert.deepStrictEqual(Array.from(lru.keys()), []);
+		});
+
 		it('undefined as key', () => {
 			const key = undefined;
 			const value = 5;
@@ -66,7 +86,7 @@ describe('LRU cache', () => {
 
 			assert.ok(lru.has(key), '`has()` should return true');
 			assert.strictEqual(lru.get(key), value, '`get()` should reply with value');
-			assert.deepStrictEqual(Array.from(lru.keys()), [undefined]);
+			assert.deepStrictEqual(Array.from(lru.keys()), [undefined], 'real key should be undefined');
 
 			lru.delete(key);
 			assert.ok(!lru.has(key), '`has()` should return false');
