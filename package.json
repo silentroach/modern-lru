@@ -24,7 +24,7 @@
     "es6"
   ],
   "files": [
-    "index.js"
+    "src/*"
   ],
   "author": "Igor Kalashnikov <igor.kalashnikov@me.com>",
   "license": "MIT",
