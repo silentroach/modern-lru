@@ -34,7 +34,7 @@
   "devDependencies": {
     "coveralls": "^2.13.0",
     "eslint": "^3.19.0",
-    "istanbul": "^0.4.4",
-    "mocha": "^3.2.0"
+    "istanbul": "^0.4.5",
+    "mocha": "^3.4.0"
   }
 }
