@@ -29,7 +29,7 @@
   "author": "Igor Kalashnikov <igor.kalashnikov@me.com>",
   "license": "MIT",
   "engines": {
-    "node": "^6.0.0"
+    "node": ">=6.0.0"
   },
   "devDependencies": {
     "coveralls": "^2.13.0",
