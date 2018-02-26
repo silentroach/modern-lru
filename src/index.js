@@ -104,6 +104,8 @@ class LRU extends Map {
 					this[propTail] = previous;
 				}
 			}
+
+			record[1] = undefined;
 		} else {
 			record = new Array(3);
 
@@ -117,7 +119,6 @@ class LRU extends Map {
 		}
 
 		record[0] = value;
-		record[1] = undefined;
 
 		if (undefined !== this[propHead] && key !== this[propHead]) {
 			record[2] = this[propHead];
