@@ -6,6 +6,10 @@ const propHead = Symbol();
 const propTail = Symbol();
 
 class LRU extends Map {
+	/**
+	 * @constructor
+	 * @param {Number} limit
+	 */
 	constructor(limit) {
 		if ('number' !== typeof limit || limit <= 0) {
 			throw new TypeError('Limit argument should be positive integer');
@@ -16,26 +20,34 @@ class LRU extends Map {
 		this[propLimit] = limit;
 	}
 
+	/**
+	 * Remove all key/value pairs
+	 */
 	clear() {
 		this[propHead] = undefined;
 		this[propTail] = undefined;
 		super.clear();
 	}
 
-	delete(originalKey) {
-		const key = getStorageKey(originalKey);
-		const record = super.get(key);
+	/**
+	 * Remove any value associated to the key
+	 * @param {*} key
+	 * @returns {Boolean} true if anything was deleted
+	 */
+	delete(key) {
+		const safeKey = getStorageKey(key);
+		const record = super.get(safeKey);
 		if (undefined === record) {
 			return false;
 		}
 
 		const [, previous, next] = record;
-		super.delete(key);
+		super.delete(safeKey);
 
-		if (key === this[propTail]) {
+		if (safeKey === this[propTail]) {
 			this[propTail] = previous;
 		}
-		if (key === this[propHead]) {
+		if (safeKey === this[propHead]) {
 			this[propHead] = next;
 		}
 
@@ -50,20 +62,29 @@ class LRU extends Map {
 		return true;
 	}
 
+	/**
+	 * Returns a boolean asserting whether a value has been associated to the key in LRU object or not
+	 * @returns {Boolean}
+	 */
 	has(key) {
 		return super.has(getStorageKey(key));
 	}
 
-	get(originalKey) {
-		const key = getStorageKey(originalKey);
-		const record = super.get(key);
+	/**
+	 * Returns the value associated to the key or undefined if there is none
+	 * @param {*} key
+	 * @returns {*}
+	 */
+	get(key) {
+		const safeKey = getStorageKey(key);
+		const record = super.get(safeKey);
 		if (undefined === record) {
 			return record;
 		}
 
-		if (key !== this[propHead]) {
+		if (safeKey !== this[propHead]) {
 			const head = super.get(this[propHead]);
-			head[1] = key;
+			head[1] = safeKey;
 
 			const [, previous, next] = record;
 			super.get(previous)[2] = next;
@@ -74,23 +95,29 @@ class LRU extends Map {
 			record[1] = undefined;
 			record[2] = this[propHead];
 
-			if (key === this[propTail]) {
+			if (safeKey === this[propTail]) {
 				this[propTail] = previous;
 			}
 
-			this[propHead] = key;
+			this[propHead] = safeKey;
 		}
 
 		return record[0];
 	}
 
-	set(originalKey, value) {
-		const key = getStorageKey(originalKey);
+	/**
+	 * Sets the value for the key, returns self
+	 * @param {*} key
+	 * @param {*} value
+	 * @returns {LRU}
+	 */
+	set(key, value) {
 		let checkSize = false;
+		const safeKey = getStorageKey(key);
 
-		let record = super.get(key);
+		let record = super.get(safeKey);
 		if (undefined !== record) {
-			if (key !== this[propHead]) {
+			if (safeKey !== this[propHead]) {
 				const [, previous, next] = record;
 				super.get(previous)[2] = next;
 
@@ -100,7 +127,7 @@ class LRU extends Map {
 
 				record[2] = this[propHead];
 
-				if (key === this[propTail]) {
+				if (safeKey === this[propTail]) {
 					this[propTail] = previous;
 				}
 			}
@@ -109,10 +136,10 @@ class LRU extends Map {
 		} else {
 			record = new Array(3);
 
-			super.set(key, record);
+			super.set(safeKey, record);
 
 			if (undefined === this[propTail]) {
-				this[propTail] = key;
+				this[propTail] = safeKey;
 			} else {
 				checkSize = true;
 			}
@@ -120,13 +147,13 @@ class LRU extends Map {
 
 		record[0] = value;
 
-		if (undefined !== this[propHead] && key !== this[propHead]) {
+		if (undefined !== this[propHead] && safeKey !== this[propHead]) {
 			record[2] = this[propHead];
 
-			super.get(this[propHead])[1] = key;
+			super.get(this[propHead])[1] = safeKey;
 		}
 
-		this[propHead] = key;
+		this[propHead] = safeKey;
 
 		if (checkSize && this.size > this[propLimit]) {
 			const tail = super.get(this[propTail]);
@@ -140,20 +167,37 @@ class LRU extends Map {
 		return this;
 	}
 
+	/**
+	 * Calls callback function once for each key-value pair present in the LRU object, in last usage order
+	 * @param {Function} callback Will be called for each key-value pair
+	 * @param {*} [thisArg=this] This value for callback function
+	 */
 	forEach(callback, thisArg = this) {
 		for (const entry of this) {
 			callback.call(thisArg, entry[1], entry[0], this);
 		}
 	}
 
+	/**
+	 * Returns a new LRUIterator object that contains the values for each element in last usage order
+	 * @returns {LRUIterator}
+	 */
 	values() {
 		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Values);
 	}
 
+	/**
+	 * Returns a new LRUIterator object that contains the keys for each element in last usage order
+	 * @returns {LRUIterator}
+	 */
 	keys() {
 		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Keys);
 	}
 
+	/**
+	 * Returns a new LRUIterator object that contains an array of [key, value] for each element in last usage order
+	 * @returns {LRUIterator}
+	 */
 	entries() {
 		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Entries);
 	}
@@ -162,6 +206,10 @@ class LRU extends Map {
 		return this.entries()[Symbol.iterator]();
 	}
 
+	/**
+	 * Cache keys limit in current instance
+	 * @returns {Number}
+	 */
 	get limit() {
 		return this[propLimit];
 	}

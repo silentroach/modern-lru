@@ -9,6 +9,12 @@ const KeyMapReversed = new Map(
 	})
 );
 
+/**
+ * @returns {Symbol} symbol only, no reason to check with .has
+ */
 exports.getStorageKey = key => KeyMap.get(key) || key;
 
+/**
+ * @returns {undefined|NaN|*}
+ */
 exports.getRealKey = key => KeyMapReversed.has(key) ? KeyMapReversed.get(key) : key;
