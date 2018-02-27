@@ -154,7 +154,7 @@ class LRU extends Map {
 
 		this[propHead] = safeKey;
 
-		if (checkSize && this.size > this[propLimit]) {
+		if (checkSize && this.size > this.limit) {
 			const tail = super.get(this[propTail]);
 			const [, previous] = tail;
 			super.get(previous)[2] = undefined;
