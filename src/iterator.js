@@ -22,33 +22,33 @@ class LRUIterator {
 
 		return {
 			next: () => {
-				if (undefined !== key) {
-					const record = this[propGetter](key);
-					let value;
-
-					key = getRealKey(key);
-
-					switch (this[propType]) {
-						case Types.Keys:
-							value = key;
-							break;
-						case Types.Values:
-							value = record[0];
-							break;
-						case Types.Entries:
-							value = [key, record[0]];
-							break;
-					}
-
-					key = record[2];
-
-					return {
-						value,
-						done: false
-					};
-				} else {
+				if (undefined === key) {
 					return { done: true };
 				}
+
+				const record = this[propGetter](key);
+				let value;
+
+				key = getRealKey(key);
+
+				switch (this[propType]) {
+					case Types.Keys:
+						value = key;
+						break;
+					case Types.Values:
+						value = record[0];
+						break;
+					case Types.Entries:
+						value = [key, record[0]];
+						break;
+				}
+
+				key = record[2];
+
+				return {
+					value,
+					done: false
+				};
 			}
 		};
 	}
