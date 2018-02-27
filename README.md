@@ -12,7 +12,7 @@ Simple LRU cache implementation on modern javascript based on native `Map` class
 
 ## API
 
-`LRU` cache class is based on native `Map` so API is **the same**.
+`LRU` cache class is based on native `Map` so API is **the same**. Also you can safely use **anything** for keys, for example `undefined`, `NaN` or some object pointer.
 
 ### Properties
 
