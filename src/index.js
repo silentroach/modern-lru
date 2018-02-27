@@ -54,7 +54,6 @@ class LRU extends Map {
 		if (undefined !== previous) {
 			super.get(previous)[2] = next;
 		}
-
 		if (undefined !== next) {
 			super.get(next)[1] = previous;
 		}
@@ -173,8 +172,8 @@ class LRU extends Map {
 	 * @param {*} [thisArg=this] This value for callback function
 	 */
 	forEach(callback, thisArg = this) {
-		for (const entry of this) {
-			callback.call(thisArg, entry[1], entry[0], this);
+		for (const [value, key] of this) {
+			callback.call(thisArg, value, key, this);
 		}
 	}
 
