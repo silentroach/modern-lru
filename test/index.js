@@ -18,6 +18,10 @@ describe('LRU cache', () => {
 			assert.throws(() => new LRU(0));
 			assert.throws(() => new LRU(-1));
 		});
+
+		it('should throw on non-iterable initial value', () => {
+			assert.throws(() => new LRU(5, 10));
+		});
 	});
 
 	it('should be instance of both Map and LRU', () => {
@@ -32,6 +36,24 @@ describe('LRU cache', () => {
 			const lru = new LRU(limit);
 
 			assert.strictEqual(lru.limit, limit);
+		});
+	});
+
+	describe('initial', () => {
+		it('should use initial value', () => {
+			const initial = [
+				[0, 'first'],
+				['test', 'second'],
+				[undefined, 'third'],
+				[null, 'fourth'],
+				[NaN, 'fifth']
+			];
+
+			const lru = new LRU(5, initial);
+
+			for (const [key, value] of initial) {
+				assert.strictEqual(value, lru.get(key));
+			}
 		});
 	});
 

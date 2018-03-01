@@ -12,8 +12,9 @@ class LRU extends Map {
 	/**
 	 * @constructor
 	 * @param {Number} limit
+	 * @param {Iterable} initial
 	 */
-	constructor(limit) {
+	constructor(limit, initial) {
 		if ('number' !== typeof limit || limit <= 0) {
 			throw new TypeError('Limit argument should be positive integer');
 		}
@@ -24,6 +25,16 @@ class LRU extends Map {
 			value: limit,
 			writable: false
 		})
+
+		if (undefined !== initial && null !== initial) {
+			if ('function' != typeof initial[Symbol.iterator]) {
+				throw new TypeError('Initial argument should be iterable');
+			}
+
+			for (const [key, value] of initial) {
+				this.set(key, value);
+			}
+		}
 	}
 
 	/**

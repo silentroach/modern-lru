@@ -14,6 +14,16 @@ Simple LRU cache implementation on modern javascript based on native `Map` class
 
 `LRU` cache class is based on native `Map` so API is **the same**. Also you can safely use **anything** for keys, for example `undefined`, `NaN` or some object pointer.
 
+`new LRU(limit[, iterable])`
+
+`limit`
+
+Cache keys limit, positive integer.
+
+`iterable`
+
+An `Array` or other `iterable` object whose elements are key-value pairs (arrays with two elements, e.g. `[[ 1, 'one' ],[ 2, 'two' ]]`). Each key-value pair is added to the new `LRU` instance.
+
 ### Properties
 
 `.size`
