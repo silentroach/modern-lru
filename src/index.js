@@ -1,5 +1,4 @@
-const LRUIterator = require('./iterator');
-const {getStorageKey} = require('./keys');
+const {getStorageKey, getRealKey} = require('./keys');
 
 const propHead = Symbol('head');
 const propTail = Symbol('tail');
@@ -195,31 +194,43 @@ class LRU extends Map {
 	}
 
 	/**
-	 * Returns a new LRUIterator object that contains the values for each element in last usage order
-	 * @returns {LRUIterator}
+	 * Returns a new iterator object that contains the values for each element in last usage order
+	 * @returns {GeneratorFunction}
 	 */
-	values() {
-		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Values);
+	* values() {
+		for (const [key, value] of this) {
+			yield value;
+		}
 	}
 
 	/**
-	 * Returns a new LRUIterator object that contains the keys for each element in last usage order
-	 * @returns {LRUIterator}
+	 * Returns a new iterator object that contains the keys for each element in last usage order
+	 * @returns {GeneratorFunction}
 	 */
-	keys() {
-		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Keys);
+	* keys() {
+		for (const [key] of this) {
+			yield key;
+		}
 	}
 
 	/**
-	 * Returns a new LRUIterator object that contains an array of [key, value] for each element in last usage order
-	 * @returns {LRUIterator}
+	 * Returns a new iterator object that contains an array of [key, value] for each element in last usage order
+	 * @returns {GeneratorFunction}
 	 */
-	entries() {
-		return new LRUIterator(key => super.get(key), this[propHead], LRUIterator.Types.Entries);
+	* entries() {
+		let key = this[propHead];
+
+		while (undefined !== key) {
+			const [value, prev, next] = super.get(key);
+
+			yield [getRealKey(key), value];
+
+			key = next;
+		}
 	}
 
-	[Symbol.iterator]() {
-		return this.entries()[Symbol.iterator]();
+	get [Symbol.iterator]() {
+		return this.entries;
 	}
 }
 

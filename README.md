@@ -46,7 +46,7 @@ Removes any value associated to the `key` and returns the value that `.has(key)`
 
 `.entries()`
 
-Returns a new `LRUIterator` object that contains **an array of [key, value]** for each element in the LRU object in last usage order.
+Returns a new `Iterator` object that contains **an array of [key, value]** for each element in the LRU object in last usage order.
 
 `.forEach(callbackFn[, thisArg])`
 
@@ -62,7 +62,7 @@ Returns a boolean asserting whether a value has been associated to the `key` in 
 
 `.keys()`
 
-Returns a new `LRUIterator` object thet contains the **keys** for each element in the `LRU` object in last usage order.
+Returns a new `Iterator` object thet contains the **keys** for each element in the `LRU` object in last usage order.
 
 `.set(key, value)`
 
@@ -70,11 +70,11 @@ Sets the value for the `key` in the `LRU` object. Returns the `LRU` object.
 
 `.values()`
 
-Returns a new `LRUIterator` object that contains the **values** for each element in the `LRU` object in last usage order.
+Returns a new `Iterator` object that contains the **values** for each element in the `LRU` object in last usage order.
 
 `[@@iterator]()`
 
-Returns a new `LRUIterator` object that contains **an array of [key, value]** for each element in the `LRU` object in last usage order.
+Returns a new `Iterator` object that contains **an array of [key, value]** for each element in the `LRU` object in last usage order.
 
 ## Example
 
