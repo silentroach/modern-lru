@@ -1,10 +1,13 @@
 const LRUIterator = require('./iterator');
 const {getStorageKey} = require('./keys');
 
-const propLimit = Symbol();
-const propHead = Symbol();
-const propTail = Symbol();
+const propHead = Symbol('head');
+const propTail = Symbol('tail');
 
+/**
+ * LRU
+ * @property {Number} limit
+ */
 class LRU extends Map {
 	/**
 	 * @constructor
@@ -17,7 +20,10 @@ class LRU extends Map {
 
 		super();
 
-		this[propLimit] = limit;
+		Object.defineProperty(this, 'limit', {
+			value: limit,
+			writable: false
+		})
 	}
 
 	/**
@@ -203,14 +209,6 @@ class LRU extends Map {
 
 	[Symbol.iterator]() {
 		return this.entries()[Symbol.iterator]();
-	}
-
-	/**
-	 * Cache keys limit in current instance
-	 * @returns {Number}
-	 */
-	get limit() {
-		return this[propLimit];
 	}
 }
 
