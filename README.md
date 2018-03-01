@@ -4,7 +4,7 @@
 [![Travis](https://img.shields.io/travis/silentroach/modern-lru.svg?style=flat-square&label=travis)](https://travis-ci.org/silentroach/modern-lru)
 [![Coverage](https://img.shields.io/coveralls/silentroach/modern-lru.svg?style=flat-square&label=coverage)](https://coveralls.io/github/silentroach/modern-lru)
 
-Simple LRU cache implementation on modern javascript based on native `Map` class.
+Simple O(1) LRU cache implementation based on native `Map` class.
 
 ## Installation
 
@@ -14,15 +14,13 @@ Simple LRU cache implementation on modern javascript based on native `Map` class
 
 `LRU` cache class is based on native `Map` so API is **the same**. Also you can safely use **anything** for keys, for example `undefined`, `NaN` or some object pointer.
 
+### Constructor
+
 `new LRU(limit[, iterable])`
 
-`limit`
+`limit` - cache keys limit, positive integer.
 
-Cache keys limit, positive integer.
-
-`iterable`
-
-An `Array` or other `iterable` object whose elements are key-value pairs (arrays with two elements, e.g. `[[ 1, 'one' ],[ 2, 'two' ]]`). Each key-value pair is added to the new `LRU` instance.
+`iterable` - optional `Array` or other `iterable` object whose elements are key-value pairs (arrays with two elements, e.g. `[[ 1, 'one' ],[ 2, 'two' ]]`). Each key-value pair is added to the new `LRU` instance.
 
 ### Properties
 
@@ -118,3 +116,9 @@ cache.set(undefined, 5);
 cache.set(NaN, 10);
 console.log(cache); // LRU { NaN => 10, undefined => 5 }
 ```
+
+## Alternatives
+
+[quick-lru](https://github.com/sindresorhus/quick-lru) - a little bit dirty with broken keys order, but supersimple, superfast and memory efficient alternative, inspired by the [hashlru](https://github.com/dominictarr/hashlru) [algorithm](https://github.com/dominictarr/hashlru#algorithm).
+
+Also [some benchmarks here](https://github.com/dominictarr/bench-lru) with more packages, but with no feature comparison.
