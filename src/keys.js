@@ -5,7 +5,7 @@ const KeyMap = new Map([
 
 const KeyMapReversed = new Map(
 	Array.from(KeyMap.keys()).map(key => {
-		return [KeyMap.get(key), key]
+		return [KeyMap.get(key), key];
 	})
 );
 

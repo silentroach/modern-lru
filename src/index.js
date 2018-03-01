@@ -23,10 +23,10 @@ class LRU extends Map {
 		Object.defineProperty(this, 'limit', {
 			value: limit,
 			writable: false
-		})
+		});
 
 		if (undefined !== initial && null !== initial) {
-			if ('function' != typeof initial[Symbol.iterator]) {
+			if ('function' !== typeof initial[Symbol.iterator]) {
 				throw new TypeError('Initial argument should be iterable');
 			}
 
@@ -198,7 +198,7 @@ class LRU extends Map {
 	 * @returns {GeneratorFunction}
 	 */
 	* values() {
-		for (const [key, value] of this) {
+		for (const [, value] of this) {
 			yield value;
 		}
 	}
@@ -221,7 +221,7 @@ class LRU extends Map {
 		let key = this[propHead];
 
 		while (undefined !== key) {
-			const [value, prev, next] = super.get(key);
+			const [value, , next] = super.get(key);
 
 			yield [getRealKey(key), value];
 
