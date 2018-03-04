@@ -119,6 +119,8 @@ console.log(cache); // LRU { NaN => 10, undefined => 5 }
 
 ## Alternatives
 
-[quick-lru](https://github.com/sindresorhus/quick-lru) - a little bit dirty with broken keys order, but supersimple, superfast and memory efficient alternative, inspired by the [hashlru](https://github.com/dominictarr/hashlru) [algorithm](https://github.com/dominictarr/hashlru#algorithm).
+[lru-fast](https://github.com/rsms/js-lru) - classic doubly-linked list based lru, superfast and memory efficient.
+
+[quick-lru](https://github.com/sindresorhus/quick-lru) - a little bit dirty with broken keys order, but supersimple and fast alternative, inspired by the [hashlru](https://github.com/dominictarr/hashlru) [algorithm](https://github.com/dominictarr/hashlru#algorithm).
 
 Also [some benchmarks here](https://github.com/dominictarr/bench-lru) with more packages, but with no feature comparison.
