@@ -22,6 +22,22 @@ describe('LRU cache', () => {
 		it('should throw on non-iterable initial value', () => {
 			assert.throws(() => new LRU(5, 10));
 		});
+
+		it('should keep order of initial iterable input', () => {
+			const lru = new LRU(2, [
+				[1, 'test1'],
+				[2, 'test2'],
+				[3, 'test3']
+			]);
+
+			assert.ok(lru.has(1));
+			assert.ok(lru.has(2));
+			assert.ok(!lru.has(3));
+
+			lru.set(4, 'test4'); // 2 will be ejected
+			assert.ok(lru.has(4));
+			assert.ok(!lru.has(2));
+		});
 	});
 
 	it('should be instance of both Map and LRU', () => {

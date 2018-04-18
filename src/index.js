@@ -30,9 +30,14 @@ class LRU extends Map {
 				throw new TypeError('Initial argument should be iterable');
 			}
 
+			const accumulator = [];
 			for (const [key, value] of initial) {
-				this.set(key, value);
+				if (accumulator.push([key, value]) >= limit) {
+					break;
+				}
 			}
+
+			accumulator.reverse().forEach(([key, value]) => this.set(key, value));
 		}
 	}
 
