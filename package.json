@@ -1,6 +1,6 @@
 {
   "name": "modern-lru",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "LRU cache on modern javascript",
   "main": "src/index.js",
   "directories": {
