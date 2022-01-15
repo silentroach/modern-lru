@@ -1,242 +1,242 @@
-const {getStorageKey, getRealKey} = require('./keys');
+const { getStorageKey, getRealKey } = require("./keys");
 
-const propHead = Symbol('head');
-const propTail = Symbol('tail');
+const propHead = Symbol("head");
+const propTail = Symbol("tail");
 
 /**
  * LRU
  * @property {Number} limit
  */
 class LRU extends Map {
-	/**
-	 * @constructor
-	 * @param {Number} limit
-	 * @param {Iterable} initial
-	 */
-	constructor(limit, initial) {
-		if ('number' !== typeof limit || limit <= 0) {
-			throw new TypeError('Limit argument should be positive integer');
-		}
+  /**
+   * @constructor
+   * @param {Number} limit
+   * @param {Iterable} initial
+   */
+  constructor(limit, initial) {
+    if ("number" !== typeof limit || limit <= 0) {
+      throw new TypeError("Limit argument should be positive integer");
+    }
 
-		super();
+    super();
 
-		Object.defineProperty(this, 'limit', {
-			value: limit,
-			writable: false
-		});
+    Object.defineProperty(this, "limit", {
+      value: limit,
+      writable: false,
+    });
 
-		if (undefined !== initial && null !== initial) {
-			if ('function' !== typeof initial[Symbol.iterator]) {
-				throw new TypeError('Initial argument should be iterable');
-			}
+    if (undefined !== initial && null !== initial) {
+      if ("function" !== typeof initial[Symbol.iterator]) {
+        throw new TypeError("Initial argument should be iterable");
+      }
 
-			const accumulator = [];
-			for (const [key, value] of initial) {
-				if (accumulator.push([key, value]) >= limit) {
-					break;
-				}
-			}
+      const accumulator = [];
+      for (const [key, value] of initial) {
+        if (accumulator.push([key, value]) >= limit) {
+          break;
+        }
+      }
 
-			accumulator.reverse().forEach(([key, value]) => this.set(key, value));
-		}
-	}
+      accumulator.reverse().forEach(([key, value]) => this.set(key, value));
+    }
+  }
 
-	/**
-	 * Remove all key/value pairs
-	 */
-	clear() {
-		this[propHead] = undefined;
-		this[propTail] = undefined;
-		super.clear();
-	}
+  /**
+   * Remove all key/value pairs
+   */
+  clear() {
+    this[propHead] = undefined;
+    this[propTail] = undefined;
+    super.clear();
+  }
 
-	/**
-	 * Remove any value associated to the key
-	 * @param {*} key
-	 * @returns {Boolean} true if anything was deleted
-	 */
-	delete(key) {
-		const safeKey = getStorageKey(key);
-		const record = super.get(safeKey);
-		if (undefined === record) {
-			return false;
-		}
+  /**
+   * Remove any value associated to the key
+   * @param {*} key
+   * @returns {Boolean} true if anything was deleted
+   */
+  delete(key) {
+    const safeKey = getStorageKey(key);
+    const record = super.get(safeKey);
+    if (undefined === record) {
+      return false;
+    }
 
-		const [, previous, next] = record;
-		super.delete(safeKey);
+    const [, previous, next] = record;
+    super.delete(safeKey);
 
-		if (safeKey === this[propTail]) {
-			this[propTail] = previous;
-		}
-		if (safeKey === this[propHead]) {
-			this[propHead] = next;
-		}
+    if (safeKey === this[propTail]) {
+      this[propTail] = previous;
+    }
+    if (safeKey === this[propHead]) {
+      this[propHead] = next;
+    }
 
-		if (undefined !== previous) {
-			super.get(previous)[2] = next;
-		}
-		if (undefined !== next) {
-			super.get(next)[1] = previous;
-		}
+    if (undefined !== previous) {
+      super.get(previous)[2] = next;
+    }
+    if (undefined !== next) {
+      super.get(next)[1] = previous;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	/**
-	 * Returns a boolean asserting whether a value has been associated to the key in LRU object or not
-	 * @returns {Boolean}
-	 */
-	has(key) {
-		return super.has(getStorageKey(key));
-	}
+  /**
+   * Returns a boolean asserting whether a value has been associated to the key in LRU object or not
+   * @returns {Boolean}
+   */
+  has(key) {
+    return super.has(getStorageKey(key));
+  }
 
-	/**
-	 * Returns the value associated to the key or undefined if there is none
-	 * @param {*} key
-	 * @returns {*}
-	 */
-	get(key) {
-		const safeKey = getStorageKey(key);
-		const record = super.get(safeKey);
-		if (undefined === record) {
-			return record;
-		}
+  /**
+   * Returns the value associated to the key or undefined if there is none
+   * @param {*} key
+   * @returns {*}
+   */
+  get(key) {
+    const safeKey = getStorageKey(key);
+    const record = super.get(safeKey);
+    if (undefined === record) {
+      return record;
+    }
 
-		if (safeKey !== this[propHead]) {
-			const head = super.get(this[propHead]);
-			head[1] = safeKey;
+    if (safeKey !== this[propHead]) {
+      const head = super.get(this[propHead]);
+      head[1] = safeKey;
 
-			const [, previous, next] = record;
-			super.get(previous)[2] = next;
-			if (undefined !== next) {
-				super.get(next)[1] = previous;
-			}
+      const [, previous, next] = record;
+      super.get(previous)[2] = next;
+      if (undefined !== next) {
+        super.get(next)[1] = previous;
+      }
 
-			record[1] = undefined;
-			record[2] = this[propHead];
+      record[1] = undefined;
+      record[2] = this[propHead];
 
-			if (safeKey === this[propTail]) {
-				this[propTail] = previous;
-			}
+      if (safeKey === this[propTail]) {
+        this[propTail] = previous;
+      }
 
-			this[propHead] = safeKey;
-		}
+      this[propHead] = safeKey;
+    }
 
-		return record[0];
-	}
+    return record[0];
+  }
 
-	/**
-	 * Sets the value for the key, returns self
-	 * @param {*} key
-	 * @param {*} value
-	 * @returns {LRU}
-	 */
-	set(key, value) {
-		let checkSize = false;
-		const safeKey = getStorageKey(key);
+  /**
+   * Sets the value for the key, returns self
+   * @param {*} key
+   * @param {*} value
+   * @returns {LRU}
+   */
+  set(key, value) {
+    let checkSize = false;
+    const safeKey = getStorageKey(key);
 
-		let record = super.get(safeKey);
-		if (undefined !== record) {
-			if (safeKey !== this[propHead]) {
-				const [, previous, next] = record;
-				super.get(previous)[2] = next;
+    let record = super.get(safeKey);
+    if (undefined !== record) {
+      if (safeKey !== this[propHead]) {
+        const [, previous, next] = record;
+        super.get(previous)[2] = next;
 
-				if (undefined !== next) {
-					super.get(next)[1] = previous;
-				}
+        if (undefined !== next) {
+          super.get(next)[1] = previous;
+        }
 
-				record[2] = this[propHead];
+        record[2] = this[propHead];
 
-				if (safeKey === this[propTail]) {
-					this[propTail] = previous;
-				}
-			}
+        if (safeKey === this[propTail]) {
+          this[propTail] = previous;
+        }
+      }
 
-			record[1] = undefined;
-		} else {
-			record = new Array(3);
+      record[1] = undefined;
+    } else {
+      record = new Array(3);
 
-			super.set(safeKey, record);
+      super.set(safeKey, record);
 
-			if (undefined === this[propTail]) {
-				this[propTail] = safeKey;
-			} else {
-				checkSize = true;
-			}
-		}
+      if (undefined === this[propTail]) {
+        this[propTail] = safeKey;
+      } else {
+        checkSize = true;
+      }
+    }
 
-		record[0] = value;
+    record[0] = value;
 
-		if (undefined !== this[propHead] && safeKey !== this[propHead]) {
-			record[2] = this[propHead];
+    if (undefined !== this[propHead] && safeKey !== this[propHead]) {
+      record[2] = this[propHead];
 
-			super.get(this[propHead])[1] = safeKey;
-		}
+      super.get(this[propHead])[1] = safeKey;
+    }
 
-		this[propHead] = safeKey;
+    this[propHead] = safeKey;
 
-		if (checkSize && this.size > this.limit) {
-			const tail = super.get(this[propTail]);
-			const [, previous] = tail;
-			super.get(previous)[2] = undefined;
-			super.delete(this[propTail]);
+    if (checkSize && this.size > this.limit) {
+      const tail = super.get(this[propTail]);
+      const [, previous] = tail;
+      super.get(previous)[2] = undefined;
+      super.delete(this[propTail]);
 
-			this[propTail] = previous;
-		}
+      this[propTail] = previous;
+    }
 
-		return this;
-	}
+    return this;
+  }
 
-	/**
-	 * Calls callback function once for each key-value pair present in the LRU object, in last usage order
-	 * @param {Function} callback Will be called for each key-value pair
-	 * @param {*} [thisArg=this] This value for callback function
-	 */
-	forEach(callback, thisArg = this) {
-		for (const [value, key] of this) {
-			callback.call(thisArg, value, key, this);
-		}
-	}
+  /**
+   * Calls callback function once for each key-value pair present in the LRU object, in last usage order
+   * @param {Function} callback Will be called for each key-value pair
+   * @param {*} [thisArg=this] This value for callback function
+   */
+  forEach(callback, thisArg = this) {
+    for (const [value, key] of this) {
+      callback.call(thisArg, value, key, this);
+    }
+  }
 
-	/**
-	 * Returns a new iterator object that contains the values for each element in last usage order
-	 * @returns {GeneratorFunction}
-	 */
-	* values() {
-		for (const [, value] of this) {
-			yield value;
-		}
-	}
+  /**
+   * Returns a new iterator object that contains the values for each element in last usage order
+   * @returns {GeneratorFunction}
+   */
+  *values() {
+    for (const [, value] of this) {
+      yield value;
+    }
+  }
 
-	/**
-	 * Returns a new iterator object that contains the keys for each element in last usage order
-	 * @returns {GeneratorFunction}
-	 */
-	* keys() {
-		for (const [key] of this) {
-			yield key;
-		}
-	}
+  /**
+   * Returns a new iterator object that contains the keys for each element in last usage order
+   * @returns {GeneratorFunction}
+   */
+  *keys() {
+    for (const [key] of this) {
+      yield key;
+    }
+  }
 
-	/**
-	 * Returns a new iterator object that contains an array of [key, value] for each element in last usage order
-	 * @returns {GeneratorFunction}
-	 */
-	* entries() {
-		let key = this[propHead];
+  /**
+   * Returns a new iterator object that contains an array of [key, value] for each element in last usage order
+   * @returns {GeneratorFunction}
+   */
+  *entries() {
+    let key = this[propHead];
 
-		while (undefined !== key) {
-			const [value, , next] = super.get(key);
+    while (undefined !== key) {
+      const [value, , next] = super.get(key);
 
-			yield [getRealKey(key), value];
+      yield [getRealKey(key), value];
 
-			key = next;
-		}
-	}
+      key = next;
+    }
+  }
 
-	get [Symbol.iterator]() {
-		return this.entries;
-	}
+  get [Symbol.iterator]() {
+    return this.entries;
+  }
 }
 
 module.exports = LRU;

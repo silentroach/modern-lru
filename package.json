@@ -7,10 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "eslint src test",
     "test": "mocha",
     "coverage": "istanbul cover _mocha",
-    "coveralls": "cat ./coverage/lcov.info | coveralls"
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "prepare": "husky install"
   },
   "repository": "git://github.com/silentroach/modern-lru.git",
   "bugs": {
@@ -34,8 +34,10 @@
   },
   "devDependencies": {
     "coveralls": "^3.1.1",
-    "eslint": "^8.6.0",
+    "husky": "^7.0.4",
     "istanbul": "^0.4.5",
-    "mocha": "^9.1.4"
+    "mocha": "^9.1.4",
+    "prettier": "^2.5.1",
+    "pretty-quick": "^3.1.3"
   }
 }
